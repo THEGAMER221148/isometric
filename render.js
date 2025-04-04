@@ -20,6 +20,30 @@ class Color {
     }
 }
 
+class Position2D {
+
+    constructor(x, y){
+        this.x = x;
+        this.y = y;
+    }
+
+}
+
+let screenCenter;
+class Position3D {
+
+    constructor(x, y, z){
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
+
+    castTo2D(){
+        return new Position2D(screenCenter.x)
+    }
+
+}
+
 const renderTools = {
     cnvs: canvas,
     context: ctx,
@@ -27,19 +51,23 @@ const renderTools = {
     initialize(){
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
+        screenCenter = new Position2D(window.innerWidth/2, window.innerHeight/2);
     },
 
-    fillTri(x1, y1, x2, y2, x3, y3, col){
+    fillTri(pos1, pos2, pos3, col){
         ctx.beginPath();
-        ctx.moveTo(x1, y1);
-        ctx.lineTo(x2, y2);
-        ctx.lineTo(x3, y3);
+        ctx.moveTo(pos1.x, pos1.y);
+        ctx.lineTo(pos2.x, pos2.y);
+        ctx.lineTo(pos3.x, pos3.y);
         ctx.closePath();
-        ctx.fillStyle = col;
+        ctx.fillStyle = col.toStyleString();
         ctx.fill();
     },
 
+    drawPoint(pos){
+        ctx.fillRect(pos.)
+    },
     draw3DTri(){},
 };
 
-export {renderTools, Color};
+export {renderTools, Color, Position2D, Position3D};
