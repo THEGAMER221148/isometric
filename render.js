@@ -42,9 +42,9 @@ class Position3D {
 
     castTo2D(){
         let xDiff = this.x-currentCamera.pos.x;
-        let yDiff = this.y+currentCamera.pos.y;
+        let yDiff = this.y-currentCamera.pos.y;
         let zDiff = this.z-currentCamera.pos.z;
-        return new Position2D((Math.sin(currentCamera.ry)*-zDiff)+(xDiff*Math.cos(currentCamera.ry))+window.innerWidth/2, yDiff+window.innerHeight/2 + (currentCamera.pos.x-this.x)/Math.tan(currentCamera.vd)*Math.sin(currentCamera.ry)+(-zDiff/Math.tan(currentCamera.vd)*Math.cos(currentCamera.ry)));//Position2D(((this.x-currentCamera.pos.x)*Math.cos(currentCamera.ry))+(this.z-currentCamera.pos.z)*Math.sin(currentCamera.ry)+window.innerWidth/2, ((this.z-currentCamera.pos.z)/Math.tan(currentCamera.vd)*Math.sin(currentCamera.ry)) + (this.y - currentCamera.pos.y) + Math.cos(currentCamera.ry)*((this.z-currentCamera.pos.x)/Math.tan(currentCamera.vd)) + window.innerHeight/2);
+        return new Position2D((Math.sin(currentCamera.ry)*-zDiff)+(xDiff*Math.cos(currentCamera.ry))+window.innerWidth/2, -yDiff+window.innerHeight/2 + (currentCamera.pos.x-this.x)/Math.tan(currentCamera.vd)*Math.sin(currentCamera.ry)+(-zDiff/Math.tan(currentCamera.vd)*Math.cos(currentCamera.ry)));//Position2D(((this.x-currentCamera.pos.x)*Math.cos(currentCamera.ry))+(this.z-currentCamera.pos.z)*Math.sin(currentCamera.ry)+window.innerWidth/2, ((this.z-currentCamera.pos.z)/Math.tan(currentCamera.vd)*Math.sin(currentCamera.ry)) + (this.y - currentCamera.pos.y) + Math.cos(currentCamera.ry)*((this.z-currentCamera.pos.x)/Math.tan(currentCamera.vd)) + window.innerHeight/2);
     }
 
     distanceFrom(position){
@@ -94,8 +94,19 @@ class Triangle {
 let screenCenter;
 
 let triangles = [
-    new Triangle(new Position3D(0, 0, 0), new Position3D(100, 0, 0), new Position3D(100, 100, 0), new Color(255, 0, 0)),
-    new Triangle(new Position3D(0, 0, 100), new Position3D(100, 0, 100), new Position3D(100, 100, 100), new Color(0, 255, 0)),
+    new Triangle(new Position3D(0, 0, 0), new Position3D(100, 0, 0), new Position3D(100, 100, 0), new Color(0, 0, 255)),
+    new Triangle(new Position3D(0, 0, 0), new Position3D(0, 100, 0), new Position3D(100, 100, 0), new Color(0, 0, 128)),
+    new Triangle(new Position3D(0, 100, 0), new Position3D(100, 100, 0), new Position3D(100, 100, 100), new Color(0, 255, 0)),
+    new Triangle(new Position3D(0, 100, 0), new Position3D(0, 100, 100), new Position3D(100, 100, 100), new Color(0, 128, 0)),
+    new Triangle(new Position3D(0, 0, 0), new Position3D(0, 0, 100), new Position3D(0, 100, 100), new Color(255, 0, 0)),
+    new Triangle(new Position3D(0, 0, 0), new Position3D(0, 100, 0), new Position3D(0, 100, 100), new Color(128, 0, 0)),
+
+    new Triangle(new Position3D(0, 0, 100), new Position3D(100, 0, 100), new Position3D(100, 100, 100), new Color(255, 255, 0)),
+    new Triangle(new Position3D(0, 0, 100), new Position3D(0, 100, 100), new Position3D(100, 100, 100), new Color(128, 128, 0)),
+    new Triangle(new Position3D(0, 0, 0), new Position3D(100, 0, 0), new Position3D(100, 0, 100), new Color(255, 0, 255)),
+    new Triangle(new Position3D(0, 0, 0), new Position3D(0, 0, 100), new Position3D(100, 0, 100), new Color(128, 0, 128)),
+    new Triangle(new Position3D(100, 0, 0), new Position3D(100, 0, 100), new Position3D(100, 100, 100), new Color(0, 255, 255)),
+    new Triangle(new Position3D(100, 0, 0), new Position3D(100, 100, 0), new Position3D(100, 100, 100), new Color(0, 128, 128)),
 ];
 
 const renderTools = {
@@ -111,7 +122,6 @@ const renderTools = {
     drawPoint(pos){
         ctx.fillStyle = new Color(0, 0, 255).toStyleString();
         ctx.fillRect(pos.x - currentCamera.pos.x - 10, pos.y - currentCamera.pos.y - 10, pos.x - currentCamera.pos.x + 10, pos.y - currentCamera.pos.y + 10);
-        console.log(pos.x - currentCamera.pos.x - 10, pos.y - currentCamera.pos.y - 10);
     },
 
     sortArray(array){
@@ -128,7 +138,7 @@ const renderTools = {
     },
 
     sortTriangles(){
-        let referencePosition = new Position3D(currentCamera.pos.x + Math.sin(currentCamera.ry)*-2000, currentCamera.pos.y - 2000, currentCamera.pos.z + Math.cos(currentCamera.ry)*-2000);
+        let referencePosition = new Position3D(currentCamera.pos.x + Math.sin(currentCamera.ry)*-2000, currentCamera.pos.y-Math.tan(currentCamera.vd)*100, currentCamera.pos.z + Math.cos(currentCamera.ry)*-2000);
         ctx.fillRect(referencePosition.castTo2D().x, referencePosition.castTo2D().y, 10, 10);
         for(let i = 0; i < triangles.length; i++){
             let j = i-1;
@@ -144,7 +154,6 @@ const renderTools = {
     renderEnvironment(){
         ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
         this.sortTriangles();
-        console.log(triangles);
         for(let i = triangles.length-1; i >= 0; i--){
             triangles[i].render();
         };
