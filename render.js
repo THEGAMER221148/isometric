@@ -93,7 +93,7 @@ class Triangle {
 
 let screenCenter;
 
-const triangles = [
+let triangles = [
     new Triangle(new Position3D(0, 0, 0), new Position3D(100, 0, 0), new Position3D(100, 100, 0), new Color(255, 0, 0)),
     new Triangle(new Position3D(0, 0, 100), new Position3D(100, 0, 100), new Position3D(100, 100, 100), new Color(0, 255, 0)),
 ];
@@ -128,21 +128,16 @@ const renderTools = {
     },
 
     sortTriangles(){
-        //get distances
-        let dists = [];
-        triangles.forEach((item) => {
-            dists.push(currentCamera.pos.distanceFrom(item.center));
-        });
-        for(let i = 0; i < dists.length; i++){
-            let current = dists[i];
+        let referencePosition = new Position3D(currentCamera.pos.x + Math.sin(currentCamera.ry)*-2000, currentCamera.pos.y - 2000, currentCamera.pos.z + Math.cos(currentCamera.ry)*-2000);
+        ctx.fillRect(referencePosition.castTo2D().x, referencePosition.castTo2D().y, 10, 10);
+        for(let i = 0; i < triangles.length; i++){
             let j = i-1;
-            while(j >= 0 && dists[j] > dists[i]){
-                dists[j+1] = dists[j];
+            let item = triangles[i]
+            while(j >= 0 && triangles[j].center.distanceFrom(referencePosition) > item.center.distanceFrom(referencePosition)){
                 triangles[j+1] = triangles[j];
                 j--;
             }
-            //dists[j+1] = dists[i];
-            //triangles[j+1] = triangles[i];
+            triangles[j+1] = item;
         }
     },
 
@@ -150,9 +145,9 @@ const renderTools = {
         ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
         this.sortTriangles();
         console.log(triangles);
-        triangles.forEach((item) => {
-            item.render();
-        });
+        for(let i = triangles.length-1; i >= 0; i--){
+            triangles[i].render();
+        };
     }
 
 };
