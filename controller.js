@@ -20,7 +20,6 @@ function step(){
     currentCamera.basicMove();
     requestAnimationFrame(step);
 }
-
 step();
 
 export { keysDown, currentCamera };
