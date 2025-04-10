@@ -87,6 +87,13 @@ class Triangle {
         ctx.closePath();
         ctx.fillStyle = this.col.toStyleString();
         ctx.fill();
+        ctx.fillStyle = 'white';
+        ctx.fillRect(this.center.castTo2D().x, this.center.castTo2D().y, 10, 10);
+    }
+
+    findClosestVertexTo(position){
+        let dist = renderTools.sortArray([this.v1.distanceFrom(position), this.v2.distanceFrom(position), this.v3.distanceFrom(position)])[0];
+        return dist == this.v1.distanceFrom(position)? this.v1 : dist == this.v2.distanceFrom(position)? this.v2 : this.v3;
     }
 
 }
@@ -138,8 +145,7 @@ const renderTools = {
     },
 
     sortTriangles(){
-        let referencePosition = new Position3D(currentCamera.pos.x + Math.sin(currentCamera.ry)*-2000, currentCamera.pos.y-Math.tan(currentCamera.vd)*100, currentCamera.pos.z + Math.cos(currentCamera.ry)*-2000);
-        ctx.fillRect(referencePosition.castTo2D().x, referencePosition.castTo2D().y, 10, 10);
+        let referencePosition = new Position3D(currentCamera.pos.x - Math.sin(currentCamera.ry)*2000, currentCamera.pos.y+1000, currentCamera.pos.z - Math.cos(currentCamera.ry)*2000);
         for(let i = 0; i < triangles.length; i++){
             let j = i-1;
             let item = triangles[i]
@@ -149,6 +155,7 @@ const renderTools = {
             }
             triangles[j+1] = item;
         }
+        ctx.fillRect(referencePosition.castTo2D().x, referencePosition.castTo2D().y, 10, 10);
     },
 
     renderEnvironment(){
